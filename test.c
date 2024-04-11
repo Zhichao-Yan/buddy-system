@@ -12,7 +12,6 @@ int main()
 {
     buddy_init();
     int *a = (int*)buddy_malloc(sizeof(int));
-    printBuddyLists();
     if(a == NULL)
         return 0;
     *a = 100;

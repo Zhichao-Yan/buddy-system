@@ -69,7 +69,8 @@ void *buddy_malloc(size_t size)
             while(index != k)
             {
                 --index;
-                struct block_header *bk1 = (struct block_header *)((char*)bk + half_size);
+                size_t half_size = (1ULL<<(index));
+                struct block_header *bk1 = (struct block_header *)((uintptr_t)bk + half_size);
                 bk1->kval = index;
                 bk1->tag = FREE;
                 insert(&avail[bk1->kval],bk1);      // insert bk1
