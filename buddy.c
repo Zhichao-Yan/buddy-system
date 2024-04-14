@@ -130,7 +130,6 @@ void buddy_free(void *ptr)
     if(ptr == NULL)
         return;
     struct block_header *bk = (struct block_header *)((char*)ptr - sizeof(struct block_header));
-    printf("try freeing %d-block(%p)\n",bk->kval,bk);
     bk->tag = FREE;
     while(1)
     {
