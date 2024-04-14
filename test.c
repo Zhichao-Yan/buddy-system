@@ -1,21 +1,19 @@
 #include <stdio.h>
 #include <stdlib.h>
-
-
-int buddy_init(void);
-void *buddy_malloc(size_t size);
-void buddy_free(void *ptr);
-void printBuddyLists(void);
+#include "buddy.h"
 
 
 int main()
 {
     buddy_init();
-    int *a = (int*)buddy_malloc(sizeof(int));
+    printBuddyLists();
+    size_t size = 876;
+    void *a = buddy_malloc(size*sizeof(char));
+    printBuddyLists();
     if(a == NULL)
         return 0;
-    *a = 100;
-    printf("number:%d\n",*a);
     buddy_free(a);
+    printBuddyLists();
+    buddy_shutdown();
     return 0;
 }

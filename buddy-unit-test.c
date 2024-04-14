@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "buddy.h"
 
 #define MAX_REQUEST 4096
 #define MAX_ITEMS 100
@@ -9,14 +10,11 @@
 #define VERBOSE  2
 #define INTERACTIVE 3
 
-int buddy_init(void);
-void *buddy_malloc(size_t size);
-void buddy_free(void *ptr);
-void printBuddyLists(void);
 
 int verbosity = TERSE;
 
-static void printAndClear(void)
+static void 
+printAndClear(void)
 {
 	printBuddyLists();
 	char ch = getchar();
@@ -166,5 +164,7 @@ int main(int argc, char *argv[])
 	
 	maxAllocationTest();
 	
+
+	buddy_shutdown();
 	exit(0);	
 }

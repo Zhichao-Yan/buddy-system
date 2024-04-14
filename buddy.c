@@ -4,8 +4,41 @@
  
 #include "buddy.h"
 
+const int RESERVED = 0;
+const int FREE = 1;
+const int UNUSED = -1; /* useful for header nodes */
 
-static size_t ceiling_log(size_t size)
+/* supports memory allocation of up to 2^(max_kval-1) in size */
+const int max_kval = 29;
+
+/* the table of pointers to the buddy system lists */
+struct block_header avail[30];
+
+/* default memory allocation is 512MB, in this program,
+ * we ask 512MB from sbrk(), but we allow applications to allocate
+ * at most 256MB, because we need extra space to store the header. */
+const size_t DEFAULT_MAX_MEM_SIZE = 512*1024*1024;
+
+void *base = NULL; // pointer to the start of the memory pool
+
+// static void printlist(int i)
+// {
+//     struct block_header *head = &avail[i],*bk = head;
+//     printf("List %d: head = %p ",i,head);
+//     while(1)
+//     {
+//         bk = bk->next;
+//         if(bk == head)
+//         {
+//             printf("--> head = %p\n",bk);
+//             break;
+//         }else{
+//             printf("--> [tag=%d,kval=%d,addr=%p] ",bk->tag,bk->kval,bk);
+//         }
+//     }
+// }
+
+size_t ceiling_log(size_t size)
 {
     size_t lgsize = 0;
     size=size-1;
@@ -37,7 +70,12 @@ int buddy_init(void)
         avail[i].next = &avail[i];
         avail[i].prev = &avail[i];
     }
-    base = sbrk(DEFAULT_MAX_MEM_SIZE);
+    size_t alignment = 1ULL << 29;
+    int ret = posix_memalign(&base, alignment, DEFAULT_MAX_MEM_SIZE);
+    if (ret != 0) {
+        // 处理分配失败的情况
+        return FALSE;
+    }
     if(base == (void *)-1)
     {
         return FALSE;
@@ -61,6 +99,7 @@ void *buddy_malloc(size_t size)
         // circular doubly linked list is not empty
         if(avail[index].next != &avail[index])
         {
+            // printlist(index);
             // acquire a memory block in double linklist
             struct block_header *bk = avail[index].next;
             // delete bk from the linklist
@@ -74,6 +113,7 @@ void *buddy_malloc(size_t size)
                 bk1->kval = index;
                 bk1->tag = FREE;
                 insert(&avail[bk1->kval],bk1);      // insert bk1
+                //printlist(index);
             }
             bk->tag = RESERVED;
             bk->kval = k;
@@ -90,11 +130,12 @@ void buddy_free(void *ptr)
     if(ptr == NULL)
         return;
     struct block_header *bk = (struct block_header *)((char*)ptr - sizeof(struct block_header));
+    printf("try freeing %d-block(%p)\n",bk->kval,bk);
     bk->tag = FREE;
     while(1)
     {
         struct block_header *buddy = (struct block_header *)((uintptr_t)bk ^ (1ULL<<(bk->kval)));
-        if(buddy->tag == RESERVED) 
+        if(buddy->tag == RESERVED || buddy->kval != bk->kval) 
             break;
         else{
             // 选择起始地址较小的块作为合并后的块
@@ -102,11 +143,16 @@ void buddy_free(void *ptr)
             merged_block->kval++; 
             bk = merged_block;
             delete(buddy);
+            bk->next = NULL;
+            bk->prev = NULL;
+            if(bk->kval == max_kval)
+                break;
         }
     }
     insert(&avail[bk->kval],bk);    // 插入释放的最后合并完成的空闲块
     return;
 }
+
 
 void printBuddyLists(void)
 {
@@ -128,8 +174,12 @@ void printBuddyLists(void)
             }
         }
     }
-    printf("Number of available blocks = %zd",cnt);
+    printf("Number of available blocks = %zd\n",cnt);
     return;
 }
 
+void buddy_shutdown(void)
+{
+    free(base);
+}
 /* vim: set ts=4: */

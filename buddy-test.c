@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "buddy.h"
 
 #define MAX_REQUEST 4096
 #define MAX_ITEMS 100
@@ -10,10 +11,6 @@
 #define VERBOSE  2
 #define INTERACTIVE 3
 
-int buddy_init(void);
-void *buddy_malloc(size_t size);
-void buddy_free(void *ptr);
-void printBuddyLists(void);
 
 int verbosity = TERSE;
 
@@ -116,5 +113,6 @@ int main(int argc, char *argv[])
         if (x[i].ptr) 
 			buddy_free(x[i].ptr);
     }
+	buddy_shutdown();
 	exit(0);	
 }

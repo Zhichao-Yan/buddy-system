@@ -1,11 +1,11 @@
 #ifndef BUDDY_H_
 #define BUDDY_H_
 
-#define __USE_MISC
-
+#define _XOPEN_SOURCE 600
 #include <stdio.h>	/* for printf() */
 #include <unistd.h>	/* for sbrk() */
 #include <stdint.h>
+#include <stdlib.h>
 
 
 #define TRUE 1
@@ -18,23 +18,6 @@ struct block_header {
     struct block_header *next;
     struct block_header *prev;
 };
-
-const int RESERVED = 0;
-const int FREE = 1;
-const int UNUSED = -1; /* useful for header nodes */
-
-/* supports memory allocation of up to 2^(max_kval-1) in size */
-const int max_kval = 29;
-
-/* the table of pointers to the buddy system lists */
-struct block_header avail[30];
-
-/* default memory allocation is 512MB, in this program,
- * we ask 512MB from sbrk(), but we allow applications to allocate
- * at most 256MB, because we need extra space to store the header. */
-const size_t DEFAULT_MAX_MEM_SIZE = 512*1024*1024;
-
-void *base = NULL; // pointer to the start of the memory pool
 
 /**
  * Initialize the buddy system to the default size 
@@ -64,5 +47,7 @@ void buddy_free(void *ptr);
  * Prints out all the lists of available blocks in the Buddy system.
  */
 void printBuddyLists(void);
+
+void buddy_shutdown(void);
 
 #endif /*BUDDY_H_*/
