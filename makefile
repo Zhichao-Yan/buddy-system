@@ -1,7 +1,7 @@
 CC:=gcc
 AR:=ar
 LD:=ld
-CFLAGS=-fPIC -g -O2 -std=c99 -Wall -MMD -Wno-unused-result
+CFLAGS=-fPIC -g -O2 -std=c99 -Wall -MMD 
 LDFLAGS:=-shared
 LIB:=-L. -lbuddy
 OBJ:=buddy.o

@@ -1,6 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include "buddy.h"
 
 #define MAX_REQUEST 4096
@@ -52,7 +49,12 @@ int main(int argc, char *argv[])
 	}
 
 	if (verbosity > TERSE)
-		system("clear");
+	{
+		int system_ret = system("clear");
+		if(system_ret == -1) {
+			perror("system call failed\n");
+		}
+	}
 
 	buddy_init();	
 	if (verbosity > TERSE) {
@@ -99,7 +101,11 @@ int main(int argc, char *argv[])
 		
 		if (verbosity == INTERACTIVE) {
 			ch = getchar();
-			system("clear");
+			int result = system("clear");
+			if (result == -1)
+			{
+				perror("system() failed");
+			}
 			if (ch == 'q')
 				exit(0); 
 		}

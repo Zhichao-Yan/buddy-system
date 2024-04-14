@@ -6,7 +6,8 @@
 #include <unistd.h>	/* for sbrk() */
 #include <stdint.h>
 #include <stdlib.h>
-
+#include <string.h>
+#include <errno.h>
 
 #define TRUE 1
 #define FALSE 0

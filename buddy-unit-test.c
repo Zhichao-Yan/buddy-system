@@ -18,7 +18,10 @@ printAndClear(void)
 {
 	printBuddyLists();
 	char ch = getchar();
-	system("clear");
+	int system_ret = system("clear");
+	if(system_ret == -1) {
+		perror("system call failed\n");
+	}
 	if (ch == 'q')
 		exit(0);
 }
@@ -147,7 +150,10 @@ int main(int argc, char *argv[])
 		setvbuf(stdin, NULL, _IONBF, 0);
 	}
 	 
-	system("clear");
+	int system_ret = system("clear");
+	if(system_ret == -1) {
+		perror("system call failed\n");
+	}
 
 	buddy_init();	
 	if (verbosity > 0) {

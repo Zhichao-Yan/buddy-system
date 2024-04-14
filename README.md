@@ -1,53 +1,50 @@
 ## Project Number/Title 
 
 * Author: zhichao-yan
-* Class: CS452/CS552 [Operating Systems] Section #xxx
+* Class: CS452/CS552 [Operating Systems] 
 
 ## Overview
 
-Concisely explain what the program does. If this exceeds a couple of
-sentences, you're going too far. Generally you should be pulling this
-right from the project specification. We don't want you to just cut and
-paste, but paraphrase what is stated in the project specification.
+This is allocator with buddy memory allocation algorithm.
 
 ## Manifest
 
-A listing of source files and other non-generated files and a brief (one line)
-explanation of the purpose of each file.
+* buddy.c: source file
+* buddy.h: head file 
+* buddy-unit-test.c: for unit test
+* buddy-test.c: for test in order to compare with malloc/free allocator as blow
+* malloc-test.c: malloc/free test
+
 
 ## Building the project
 
-This section should tell the user how to build your code.  If you are
-delivering a library, where does it need to be installed or how do you use
-it? Is this an executable, if so how can a user get up to speed as fast
-as possible.
+1. `make`
+2. `export LD_LIBRARY_PATH = .`
+3. `./buddy-test 100 1234 s`or `./buddy-unit-test s`
 
-## Features and usage
-
-Summarize the main features of your program. It is also appropriate to
-instruct the user how to use your program.
 
 ## Testing
+1. buddy unit test(Malloc and free 1 byte)
+`./buddy-unit-test v`
+2. Stability test: run successfully without crashing 
+`./buddy-test 20000000 1234 s`
+3. Performance: better than malloc/free allocator
+```sh
+root@iZbp19rh4d6jcag5epp4hrZ:~/buddy-system# time ./buddy-test 20000000 1234 s
 
-This section should detail how you tested your code. Simply stating "I ran
-it a few times and it seems to work" is not sufficient. Your testing needs to
-be detailed here.
+real    0m1.149s
+user    0m1.147s
+sys     0m0.000s
+root@iZbp19rh4d6jcag5epp4hrZ:~/buddy-system# time ./malloc-test 20000000 1234 s  
+
+real    0m1.782s
+user    0m1.780s
+sys     0m0.000s
+```
 
 ## Known Bugs
+bug all fixed.
+1. need to notice the conditions when the buddy is mergeable.**buddy must be free and in the same block size**
 
-List known bugs that you weren't able to fix (or ran out of time to fix).
-
-## Reflection and Self Assessment
-
-Discuss the issues you encountered during development and testing. What
-problems did you have? What did you have to research and learn on your
-own? What kinds of errors did you get? How did you fix them?
-
-What parts of the project did you find challenging? Is there anything that
-finally "clicked" for you in the process of working on this project? How well
-did the development and testing process go for you?
-
-## Sources Used
-
-If you used any sources outside of the text book you should list them here. If you looked something up on
-stackoverflow.com and fail to cite it in this section it will be considered plagiarism and be dealt with accordingly. So be safe CITE!
+2. sbrk() function cannot give you an aligned address,in this case,you cannot use below way to find corresponding buddy
+> your_buddy_address = your_address^(1ULL<<your_kval));
