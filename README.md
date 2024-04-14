@@ -48,3 +48,7 @@ bug all fixed.
 
 2. sbrk() function cannot give you an aligned address,in this case,you cannot use below way to find corresponding buddy
 > your_buddy_address = your_address^(1ULL<<your_kval));
+
+
+## cites
+1. [github](https://github.com/jidongbsu/cs452-buddy-system)
