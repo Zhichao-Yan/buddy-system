@@ -1,4 +1,4 @@
-## Project Number/Title 
+## Project: buddy system allocator
 
 * Author: zhichao-yan
 * Class: CS452/CS552 [Operating Systems] 
@@ -46,7 +46,7 @@ sys     0m0.000s
 bug all fixed.
 1. need to notice the conditions when the buddy is mergeable.**buddy must be free and in the same block size**
 
-2. sbrk() function cannot give you an aligned address,in this case,you cannot use below way to find corresponding buddy
+2. sbrk() function cannot give you an aligned address,in this case,you cannot use below way to find corresponding buddy,you need to do alignment by yourself or use other functions  e.g. `int posix_memalign(void **memptr, size_t alignment, size_t size);`
 > your_buddy_address = your_address^(1ULL<<your_kval));
 
 
